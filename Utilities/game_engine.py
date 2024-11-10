@@ -26,7 +26,7 @@ class game_engine():
         map_object = self.map[location_to_check[0]][location_to_check[1]]
         if map_object==" ":
             return "empty"
-        elif map_object=="_":
+        elif map_object=="‾":
             return "blocked"
         elif map_object=="o":
             return "coin"
