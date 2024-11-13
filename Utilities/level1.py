@@ -1,19 +1,10 @@
 
 level = [
-    [" "," "," "," "," "," "," "],
-    ["T"," "," "," "," ","‾","‾"],
+    ["o"," "," "," "," "," ","o"],
+    ["T"," ","o"," "," ","‾","‾"],
     ["‾","‾","‾","‾","‾"," "," "]
 ]
 
-level_1 = [
-    ["T","_","_","_","_","_","_"],
-    ["_","_","_","_","_","_","_"],
-    ["_","_","_","_","_","_","_"]
-]
-
-i=0
-j=0
-index=0
 output = ""
 
 turret_locations = []
@@ -25,17 +16,3 @@ def get_level():
         "turret_locations":turret_locations,
         "character_location":character_location
     }
-
-
-while index < len(level):
-    item = level[index]
-    index += 1 
-    for j in range(j, 20):
-        item.append("‾")
-    #reset the value of J to 0
-    j = 0
-
-
-for row in level:
-    output += " ".join(row) + "\n"
-print(output)

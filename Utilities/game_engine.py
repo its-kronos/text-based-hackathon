@@ -69,5 +69,10 @@ class game_engine():
         self.game_moves = []
                 
     def render(self):
-        print(self.map)
+        #print(self.map)
+        to_print = f"Coins:{self.coins}\n"
+        for line in self.map:
+            to_print+="".join(line)
+            to_print+="\n"
+        print(to_print)
         sleep(0.5)
