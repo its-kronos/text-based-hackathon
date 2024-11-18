@@ -1,14 +1,12 @@
-
 level = [
-    ["o"," "," "," "," "," ","o"],
-    ["T"," ","o"," "," ","‾","‾"],
-    ["‾","‾","‾","‾","‾"," "," "]
+    [" "," "," "," "," "," "," "," "],
+    ["o"," "," "," "," "," ","o",")"],
+    ["T"," ","o"," "," ","‾","‾","‾"],
+    ["‾","‾","‾","‾","‾"," "," "," "]
 ]
 
-output = ""
-
 turret_locations = []
-character_location = [1,0] # Y,X, where Y goes from top
+character_location = [2,0] # Y,X, where Y goes from top
 
 def get_level():
     return {
