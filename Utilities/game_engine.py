@@ -17,7 +17,7 @@ def deep_copy(mutable):
 
 class game_engine():
     def __init__(self):
-        self.total_levels = 2
+        self.total_levels = 1
 
         self.game_maps = [level1.get_level(),level2.get_level()]
 
@@ -27,13 +27,13 @@ class game_engine():
         self.current_level_data = self.game_maps[self.current_level-1]
 
         self.map = self.current_level_data["level"]
-        self.turret_locations = self.current_level_data["turret_locations"]
+        self.turrets = self.current_level_data["turrets"]
         self.character_location = self.current_level_data["character_location"]
         self.coins = 0
         self.game_moves = []
 
         self.game_over = False
-
+        self.previous_render = None
         self.render()
 
     def restart(self):
@@ -42,7 +42,7 @@ class game_engine():
         self.current_level_data = self.game_maps[self.current_level-1]
 
         self.map = self.current_level_data["level"]
-        self.turret_locations = self.current_level_data["turret_locations"]
+        self.turrets = self.current_level_data["turrets"]
         self.character_location = self.current_level_data["character_location"]
         self.coins = 0
         self.game_moves = []
@@ -57,15 +57,22 @@ class game_engine():
             self.current_level +=1
             self.current_level_data = self.game_maps[self.current_level-1]
             self.map = self.current_level_data["level"]
-            self.turret_locations = self.current_level_data["turret_locations"]
+            self.turrets = self.current_level_data["turrets"]
             self.character_location = self.current_level_data["character_location"]
             self.render()
         else:
             if not self.game_over:
-                self.game_over = True
-                print('You Won!')
-                print(f"Total score: {self.coins}")
-                print("Type \"R\" to restart")
+                self.game_over_func("Win")
+
+    def game_over_func(self,condition):
+        if not self.game_over:
+            self.game_over = True
+            if condition=="loss":
+                print('Game Over!')
+            else:
+                print("You Won!")
+            print(f"Total score: {self.coins}")
+            print("Enter \"R\" to restart")
 
     def check_collision(self,dir,location_to_check):
         if dir == "a":
@@ -77,10 +84,13 @@ class game_engine():
         elif dir=="w":
             if location_to_check[0]<0:
                 return "blocked"
+        elif dir=="s":
+            if location_to_check[0]>len(self.map):
+                return "blocked"
         map_object = self.map[location_to_check[0]][location_to_check[1]]
         if map_object==" ":
             return "empty"
-        elif map_object=="‾":
+        elif map_object=="‾" or map_object=="_":
             return "blocked"
         elif map_object=="o":
             return "coin"
@@ -88,12 +98,17 @@ class game_engine():
             return "laser"
         elif map_object==")":
             return "portal"
+        elif map_object=="T":
+            return "player"
     def move(self,move_to,coll):
-        self.map[self.character_location[0]][self.character_location[1]]=" "
-        self.character_location = [move_to[0],move_to[1]]
-        self.map[self.character_location[0]][self.character_location[1]]="T"
-        if coll == "coin":
-             self.coins+=1
+        if coll!="laser" and coll!="portal":
+            self.map[self.character_location[0]][self.character_location[1]]=" "
+            self.character_location = [move_to[0],move_to[1]]
+            self.map[self.character_location[0]][self.character_location[1]]="T"
+            if coll == "coin":
+                self.coins+=1
+        else:
+            self.map[self.character_location[0]][self.character_location[1]]=" "
         self.render()
 
     def next_gamestate(self):
@@ -121,7 +136,12 @@ class game_engine():
             if coll == "empty" or coll == "coin":
                 self.move(location_to_check,coll)
             elif coll == "portal":
+                self.move(location_to_check,coll)
                 self.change_map()
+                break
+            elif coll == "laser":
+                self.move(location_to_check,coll)
+                self.game_over_func("loss")
                 break
             
 
@@ -131,9 +151,62 @@ class game_engine():
                 if check_gravity == "empty" or check_gravity == "coin":
                     self.move(location_to_check,check_gravity)
                 elif check_gravity == "portal":
+                    self.move(location_to_check,coll)
                     self.change_map()
                     break
-        
+                elif coll == "laser":
+                    self.game_over_func("loss")
+                    break
+
+            for turret in self.turrets:
+                bullets_to_remove = []
+
+                if turret["tick_num"]<turret["firerate"]-1:
+                    turret["tick_num"]+=1
+                else:
+                    turret["tick_num"]=0
+                    turret["bullets"].append({"loc":turret["location"],
+                                              "time":0})
+                for bullet in turret["bullets"]:
+                    bullet["time"]+=0
+                    if bullet["time"]<=turret["despawn_time"]:
+                        if turret["dir"]=="left":
+                            location_to_check = [bullet["loc"][0],bullet["loc"][1]-1]
+                            coll = self.check_collision("a",location_to_check) 
+                        elif turret["dir"]=="up":
+                            location_to_check = [bullet["loc"][0]-1,bullet["loc"][1]]
+                            coll = self.check_collision("w",location_to_check)
+                        elif turret["dir"]=="right":
+                            location_to_check = [bullet["loc"][0],bullet["loc"][1]+1]
+                            coll = self.check_collision("d",location_to_check)
+                        elif turret["dir"]=="down":
+                            location_to_check = [bullet["loc"][0]+1,bullet["loc"][1]]
+                            coll = self.check_collision("s",location_to_check)
+                        if coll == "player":
+
+                            if self.map[bullet["loc"][0]][bullet["loc"][1]] == "-":
+                                self.map[bullet["loc"][0]][bullet["loc"][1]] = " "
+                            bullet["loc"] = location_to_check
+                            self.map[bullet["loc"][0]][bullet["loc"][1]] = "-"
+
+                            self.game_over_func("loss")
+                            break
+                        elif coll == "empty" or coll=="laser":
+                            if self.map[bullet["loc"][0]][bullet["loc"][1]] == "-":
+                                self.map[bullet["loc"][0]][bullet["loc"][1]] = " "
+                            bullet["loc"] = location_to_check
+                            self.map[bullet["loc"][0]][bullet["loc"][1]] = "-"
+                        else:
+                            bullets_to_remove.append(bullet)
+                    else:
+                        self.map[bullet["loc"][0],bullet["loc"][1]]==" "
+                        bullets_to_remove.append(bullet)
+                for bullet in bullets_to_remove:
+                    turret["bullets"].remove(bullet)
+                    if bullet not in turret["bullets"]:
+                        self.map[bullet["loc"][0]][bullet["loc"][1]] = " "
+                bullets_to_remove = []
+        self.render()
         self.game_moves = []
                 
     def render(self):
@@ -141,5 +214,7 @@ class game_engine():
         for line in self.map:
             to_print+="".join(line)
             to_print+="\n"
-        print(to_print)
-        sleep(0.5)
+        if self.previous_render!=to_print:
+            self.previous_render = to_print
+            print(to_print)
+            sleep(0.5)
