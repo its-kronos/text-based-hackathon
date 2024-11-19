@@ -1,6 +1,7 @@
 from time import sleep
 import Utilities.level1 as level1
 import Utilities.level2 as level2
+import Utilities.level3 as level3
 from colorama import init, Fore, Back,Style
 
 init()
@@ -20,9 +21,9 @@ def deep_copy(mutable):
 
 class game_engine():
     def __init__(self):
-        self.total_levels = 1
+        self.total_levels = 3
 
-        self.game_maps = [level1.get_level(),level2.get_level()]
+        self.game_maps = [level1.get_level(),level2.get_level(),level3.get_level()]
 
         self.game_maps_copy = deep_copy(self.game_maps) #mutability :C
 
@@ -154,10 +155,11 @@ class game_engine():
                 if check_gravity == "empty" or check_gravity == "coin":
                     self.move(location_to_check,check_gravity)
                 elif check_gravity == "portal":
-                    self.move(location_to_check,coll)
+                    self.move(location_to_check,check_gravity)
                     self.change_map()
                     break
-                elif coll == "laser":
+                elif check_gravity == "laser":
+                    self.move(location_to_check,check_gravity)
                     self.game_over_func("loss")
                     break
 

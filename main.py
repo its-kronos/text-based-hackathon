@@ -1,6 +1,8 @@
 from time import sleep
 from Utilities import game_engine
 
+print("Welcome! This is a 2D platformer. Your character is \"T\", turrets are the carot keys, and the goal is to get to the portals, which are parenthesis.\n\nThe controls are W,A, and D\n\n")
+
 engine = game_engine.game_engine()
 
 while True:

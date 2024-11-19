@@ -3,10 +3,11 @@ from colorama import init,Fore,Style
 init()
 
 level = [
-    [" "," "," "," "," "," "," "," "," "],
-    [" "," "," "," "," "," "," "," ","_"],
-    ["T"," "," "," "," ","<",")"," ","o"],
-    ["‾","‾","‾","‾","‾","‾","‾","‾","‾"]
+    [" "," "," "," "," "," "," "," "," "," "],
+    [" "," "," ","o"," "," ","o"," "," "," "],
+    ["_","_"," "," "," "," "," "," "," "," "],
+    ["T"," "," ","o","‾","‾","‾"," "," ",")"],
+    ["‾","‾","‾","‾"," "," "," ","‾","‾","‾"]
 ]
 
 for l in level:
@@ -22,21 +23,9 @@ for l in level:
         elif c=="T":
             l[l.index(c)] = Fore.MAGENTA+"T"+Style.RESET_ALL
 
-turrets = [{"location":[2,5],
-            "firerate":3,
-            "tick_num":3,
-            "despawn_time":5,
-            "dir":"left",
-            "bullets":[] #bullet: {location, time}
-            }]
+turrets = []
 
-character_location = [2,0] # Y,X, where Y goes from top
-
-l = [1,1,1,2,3,4,5,5,5]
-
-l.remove(1)
-
-print(l)
+character_location = [3,0] # Y,X, where Y goes from top
 
 def get_level():
     return {

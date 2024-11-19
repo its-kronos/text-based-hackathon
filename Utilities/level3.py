@@ -4,9 +4,10 @@ init()
 
 level = [
     [" "," "," "," "," "," "," "," "," "," "," "," "],
-    ["T"," "," "," ","o"," "," "," "," "," "," ","<"],
-    ["‾","‾","‾","‾","‾"," "," ","o"," "," ",")","‾"],
-    [" "," "," "," "," ","‾","‾","‾","‾","‾","‾"," "],
+    [" "," "," "," "," "," "," "," "," "," "," "," "],
+    ["o"," "," "," "," "," "," "," "," ","<"," "," "],
+    [">"," ","T"," "," ","‾","‾","o","‾","‾","‾"," "],
+    ["‾","‾","‾","‾","‾"," "," ","‾"," "," "," ",")"],
 ]
 
 for l in level:
@@ -22,15 +23,22 @@ for l in level:
         elif c=="T":
             l[l.index(c)] = Fore.MAGENTA+"T"+Style.RESET_ALL
 
-turrets = [{"location":[1,11],
+turrets = [{"location":[3,0],
             "firerate":1,
-            "tick_num":1,
-            "despawn_time":1000,
+            "tick_num":0,
+            "despawn_time":100,
+            "dir":"right",
+            "bullets":[] #bullet: {location, time}
+            },
+            {"location":[2,9],
+            "firerate":5,
+            "tick_num":0,
+            "despawn_time":4,
             "dir":"left",
             "bullets":[] #bullet: {location, time}
             }]
 
-character_location = [1,0] # Y,X, where Y goes from top
+character_location = [3,2] # Y,X, where Y goes from top
 
 def get_level():
     return {
