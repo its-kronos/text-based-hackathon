@@ -1,6 +1,9 @@
 from time import sleep
 import Utilities.level1 as level1
 import Utilities.level2 as level2
+from colorama import init, Fore, Back,Style
+
+init()
 
 already_jumped = False
 
@@ -90,21 +93,21 @@ class game_engine():
         map_object = self.map[location_to_check[0]][location_to_check[1]]
         if map_object==" ":
             return "empty"
-        elif map_object=="‾" or map_object=="_":
+        elif map_object==Fore.GREEN+"‾"+Style.RESET_ALL or map_object==Fore.LIGHTBLACK_EX+"_"+Style.RESET_ALL:
             return "blocked"
-        elif map_object=="o":
+        elif map_object==Fore.YELLOW+"o"+Style.RESET_ALL:
             return "coin"
-        elif map_object=="-":
+        elif map_object==Fore.RED+"-"+Style.RESET_ALL:
             return "laser"
-        elif map_object==")":
+        elif map_object==Fore.BLUE+")"+Style.RESET_ALL:
             return "portal"
-        elif map_object=="T":
+        elif map_object==Fore.MAGENTA+"T"+Style.RESET_ALL:
             return "player"
     def move(self,move_to,coll):
         if coll!="laser" and coll!="portal":
             self.map[self.character_location[0]][self.character_location[1]]=" "
             self.character_location = [move_to[0],move_to[1]]
-            self.map[self.character_location[0]][self.character_location[1]]="T"
+            self.map[self.character_location[0]][self.character_location[1]]=Fore.MAGENTA+"T"+Style.RESET_ALL
             if coll == "coin":
                 self.coins+=1
         else:
@@ -184,18 +187,18 @@ class game_engine():
                             coll = self.check_collision("s",location_to_check)
                         if coll == "player":
 
-                            if self.map[bullet["loc"][0]][bullet["loc"][1]] == "-":
+                            if self.map[bullet["loc"][0]][bullet["loc"][1]] == Fore.RED+"-"+Style.RESET_ALL:
                                 self.map[bullet["loc"][0]][bullet["loc"][1]] = " "
                             bullet["loc"] = location_to_check
-                            self.map[bullet["loc"][0]][bullet["loc"][1]] = "-"
+                            self.map[bullet["loc"][0]][bullet["loc"][1]] = Fore.RED+"-"+Style.RESET_ALL
 
                             self.game_over_func("loss")
                             break
                         elif coll == "empty" or coll=="laser":
-                            if self.map[bullet["loc"][0]][bullet["loc"][1]] == "-":
+                            if self.map[bullet["loc"][0]][bullet["loc"][1]] == Fore.RED+"-"+Style.RESET_ALL:
                                 self.map[bullet["loc"][0]][bullet["loc"][1]] = " "
                             bullet["loc"] = location_to_check
-                            self.map[bullet["loc"][0]][bullet["loc"][1]] = "-"
+                            self.map[bullet["loc"][0]][bullet["loc"][1]] = Fore.RED+"-"+Style.RESET_ALL
                         else:
                             bullets_to_remove.append(bullet)
                     else:
