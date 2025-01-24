@@ -14,3 +14,5 @@ The goal of the game is to collect as many coins as possible (and make it to the
 
 ## To Play
 Clone the respository to your local machine and run main.py
+
+- If from hackclub, you can run it via next here: /var/community/text_game/text-based-hackathon
